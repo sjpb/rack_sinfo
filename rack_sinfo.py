@@ -24,6 +24,7 @@
         - chassis_loc
         - partition
         - state
+    - --unique yes|no: whether to filter to unique items, default no
 """
 
 import subprocess, sys

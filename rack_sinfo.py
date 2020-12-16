@@ -10,7 +10,7 @@
     
     --help: Print usage information
     --states STATES: filter to nodes in one of the given comma-separated slurm node states to match, or "any", default "idle". NB suffixes e.g. "*" must be included to match except for "any"
-    --racks RACKS: filter to nodes in the given comma-separated list of racks, or "all" (default)
+    --racks RACKS: filter to nodes matching any (partial) rack name in the given comma-separated list of rack names, or "all" (default)
     --numnodes NUMNODES: filter to nodes in racks where this many nodes meet critera, default -1 means any number
     --partitions PARTITION: filter to nodes in the given comma-separated list of partitions, default is "default" which selects the default paritition only
     --format output: One of
@@ -69,6 +69,24 @@ def get_nodes_info():
         ))
     return nodes
 
+def matches(s, seq):
+    """ Return True if any str elements in `seq` are in str `s`
+    
+        >>> matches('h24b8', ['h24b8', 'h24c2'])
+        True
+        >>> matches('h24b8', ['h24'])
+        True
+        >>> matches('h24b8', ['h24b9', 'h24c2'])
+        False
+        >>> matches('h24b8', ['h24b9'])
+        False
+
+    """
+    for e in seq:
+        if e in s:
+            return True
+    return False
+
 if __name__ == '__main__':
     
     if '--help' in sys.argv[1:]:
@@ -84,7 +102,7 @@ if __name__ == '__main__':
         filtered = [n for n in all_nodes]
     if cmd_opts['--racks'] != 'all':
         racks = cmd_opts['--racks'].split(',')
-        filtered = [n for n in filtered if n['rack'] in racks ]
+        filtered = [n for n in filtered if matches(n['rack'], racks)]
     if cmd_opts['--partitions'] == 'default':
         filtered = [n for n in filtered if n['partition'][-1] == '*']
     else:

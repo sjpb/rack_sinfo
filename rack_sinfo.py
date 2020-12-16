@@ -7,24 +7,25 @@
         ./count_nodes.py [options]
     
     Options:
-       
-    - --states STATES: filter to nodes in one of the given comma-separated slurm node states to match, or "any", default "idle". NB suffixes e.g. "*" must be included to match except for "any".
-    - --racks RACKS: filter to nodes in the given comma-separated list of racks, or "all" (default)
-    - --numnodes NUMNODES: filter to nodes in racks where this many nodes meet critera, default -1 means any number
-    - --partitions PARTITION: filter to nodes in the given comma-separated list of partitions, default is "default" which selects the default paritition only
-    - --format output: One of
+    
+    --help: Print usage information
+    --states STATES: filter to nodes in one of the given comma-separated slurm node states to match, or "any", default "idle". NB suffixes e.g. "*" must be included to match except for "any"
+    --racks RACKS: filter to nodes in the given comma-separated list of racks, or "all" (default)
+    --numnodes NUMNODES: filter to nodes in racks where this many nodes meet critera, default -1 means any number
+    --partitions PARTITION: filter to nodes in the given comma-separated list of partitions, default is "default" which selects the default paritition only
+    --format output: One of
         - csv: comma-separated list of matches nodes (default)
         - exclude: like csv but non-matching, suitable for sbatch "--exclude" directive
         - row: one item per row
         - count: output counts instead of items
-    - --output ITEM: Item to output, one of:
+    --output ITEM: Item to output, one of:
         - hostname (default)
         - rack
         - u_loc
         - chassis_loc
         - partition
         - state
-    - --unique yes|no: whether to filter to unique items, default no
+    --unique yes|no: whether to filter to unique items, default no
 """
 
 import subprocess, sys
@@ -69,6 +70,9 @@ def get_nodes_info():
     return nodes
 
 if __name__ == '__main__':
+    
+    if '--help' in sys.argv[1:]:
+        exit(__doc__)
 
     cmd_opts.update(dict(zip(*[iter(sys.argv[1:])]*2)))
     all_nodes = get_nodes_info()
